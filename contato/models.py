@@ -12,8 +12,6 @@ from django.contrib.auth.models import User
 # picture (imagem)
 
 
-
-
 class Category(models.Model):
     class Meta:
         verbose_name = 'Categoria'
