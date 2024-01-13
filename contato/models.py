@@ -27,14 +27,14 @@ class Contact(models.Model):
         verbose_name = 'Contato'
         verbose_name_plural = 'Contatos'
         
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50, blank=True)
-    phone = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50,verbose_name='Nome')
+    last_name = models.CharField(max_length=50,verbose_name='Sobrenome', blank=True)
+    phone = models.CharField(max_length=50, verbose_name='Telefone')
     email = models.EmailField(max_length=254, blank=True)
     created_date = models.DateTimeField(default=timezone.now)
-    description = models.TextField(blank=True)
+    description = models.TextField(verbose_name='Descrição',blank=True)
     show = models.BooleanField(default=True)
-    picture = models.ImageField(blank=True, upload_to='pictures/%Y/%m/')
+    picture = models.ImageField(verbose_name='Imagem', blank=True, upload_to='pictures/%Y/%m/')
     category = models.ForeignKey(
         Category, 
         on_delete=models.SET_NULL,
