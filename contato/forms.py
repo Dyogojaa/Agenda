@@ -2,6 +2,9 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from contato.models import Contact
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User 
+
 
 # Criando um Formulário Django atráves do Modelo Criado, ajuda e não precisa se matar criando o HTML na unha
 class ContactForm(forms.ModelForm):   
@@ -38,4 +41,28 @@ class ContactForm(forms.ModelForm):
         if first_name =='ABC':
             self.add_error('first_name', ValidationError('Não Digitar ABC no campo', code='invalid'))     
         return first_name
+
         
+class RegisterForm(UserCreationForm):
+    
+    first_name = forms.CharField(required=True)    
+    last_name = forms.CharField(required=True)    
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = User
+        fields = (
+            'first_name', 'last_name', 'username', 
+            'email','password1', 'password2'
+        )
+        
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        
+        if User.objects.filter(email=email).exists():
+            self.add_error(
+                'email',
+                ValidationError('Já existe esse email cadastrado!', code='invalid')
+            )
+        
+        return email
