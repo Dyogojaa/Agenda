@@ -3,13 +3,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from contato.forms import ContactForm
 from django.urls import reverse
 from contato.models import Contact
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='contato:login')   
 def create(request):
     
     form_action = reverse('contato:create')
     
     if request.method == 'POST':      
-        form = ContactForm(request.POST, request.FILES)         
+        form = ContactForm(request.POST, request.FILES)    
+             
         
         contexto = {        
             'form': form,
@@ -17,8 +20,10 @@ def create(request):
             
         }
         
-        if form.is_valid():
-            contact = form.save()
+        if form.is_valid():            
+            contact = form.save(commit=False)
+            contact.owner = request.user
+            contact.save()
             return redirect('contato:update', contact_id=contact.pk)
             
         return render(
@@ -38,10 +43,11 @@ def create(request):
         'contato/create.html',
         contexto
     )        
-    
+
+@login_required(login_url='contato:login')       
 def update(request, contact_id):
     contact = get_object_or_404(
-        Contact, pk=contact_id, show=True
+        Contact, pk=contact_id, show=True, owner=request.user
     )
     form_action = reverse('contato:update', args=(contact_id,))
 
@@ -77,9 +83,10 @@ def update(request, contact_id):
         contexto
     )            
 
+@login_required(login_url='contato:login')   
 def delete(request, contact_id):
     contact = get_object_or_404(
-        Contact, pk=contact_id, show=True
+        Contact, pk=contact_id, show=True, owner=request.user
     )
     
     confirmation = request.POST.get('confirmation', 'no')

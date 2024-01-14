@@ -42,7 +42,7 @@ class Contact(models.Model):
         null = True
         )
         
-    user = models.ForeignKey(
+    owner = models.ForeignKey(
         User, 
         on_delete=models.SET_NULL,
         blank = True,
